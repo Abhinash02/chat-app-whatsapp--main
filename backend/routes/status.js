@@ -5,9 +5,7 @@ const User = require("../models/User");
 const { authenticate } = require("./auth");
 const router = express.Router();
 
-// --- UPDATE THIS ROUTE ---
 router.post("/", authenticate, async (req, res) => {
-  // Add mediaType to destructuring
   const { text, mediaUrl, mediaType } = req.body; 
   if (!text && !mediaUrl) {
     return res.status(400).json({ message: "Status cannot be empty" });
@@ -28,7 +26,7 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-// GET ALL STATUSES (This route is fine, no changes needed)
+// GET ALL STATUSES 
 router.get("/all", authenticate, async (req, res) => {
   try {
     const allStatuses = await Status.find({

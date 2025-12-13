@@ -1,415 +1,244 @@
-// // src/app/login/page.js
-// "use client";
-// import { useState } from "react";
-// import axios from "axios";
-// import { useRouter } from "next/navigation";
-
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
-// export default function Login() {
-//   const [phone, setPhone] = useState("");
-//   const [pass, setPass] = useState("");
-//   const [isSignup, setIsSignup] = useState(false);
-//   const [name, setName] = useState("");
-//   const [error, setError] = useState("");
-//   const router = useRouter();
-
-//   const submit = async () => {
-//     setError("");
-//     if (!phone || !pass || (isSignup && !name)) {
-//       setError("Fill all fields");
-//       return;
-//     }
-
-//     try {
-//       const url = isSignup ? "/signup" : "/login";
-//       const body = isSignup ? { username: name, phoneNumber: phone, password: pass } : { phoneNumber: phone, password: pass };
-
-//       const res = await axios.post(`${API_URL}/api/auth${url}`, body);
-//       localStorage.setItem("token", res.data.token);
-//       localStorage.setItem("username", res.data.username);
-
-//       // SUCCESS → GO TO CHAT
-//       router.push("/chat");
-//     } catch (e) {
-//       setError(e.response?.data?.message || "Server error");
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-green-400 to-blue-600 flex items-center justify-center p-5">
-//       <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-md">
-//         <h1 className="text-4xl font-bold text-center text-green-600 mb-8">
-//           {isSignup ? "Join WhatsApp" : "Welcome Back"}
-//         </h1>
-
-//         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-
-//         {isSignup && (
-//           <input
-//             placeholder="Your Name"
-//             value={name}
-//             onChange={(e) => setName(e.target.value)}
-//             className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
-//           />
-//         )}
-
-//         <input
-//           placeholder="Phone Number"
-//           value={phone}
-//           onChange={(e) => setPhone(e.target.value)}
-//           className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
-//         />
-
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={pass}
-//           onChange={(e) => setPass(e.target.value)}
-//           className="w-full p-4 border-2 border-gray-300 rounded-xl mb-6 text-lg"
-//         />
-
-//         <button
-//           onClick={submit}
-//           className="w-full bg-green-500 text-white py-5 rounded-xl font-bold text-2xl hover:bg-green-600 transition"
-//         >
-//           {isSignup ? "SIGN UP" : "LOGIN"}
-//         </button>
-
-//         <p className="text-center mt-6 text-gray-600">
-//           {isSignup ? "Already have account?" : "New here?"}{" "}
-//           <button
-//             onClick={() => {
-//               setIsSignup(!isSignup);
-//               setError("");
-//             }}
-//             className="text-green-600 font-bold underline"
-//           >
-//             {isSignup ? "Login" : "Create Account"}
-//           </button>
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
-// src/app/login/page.js
-// "use client";
-// import { useState } from "react";
-// import axios from "axios";
-// import { useRouter } from "next/navigation";
-// import socket from "../utils/socket.client.js";
-
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
-// export default function LoginPage() {
-//   const [phoneNumber, setPhoneNumber] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [username, setUsername] = useState("");
-//   const [isSignup, setIsSignup] = useState(false);
-//   const [error, setError] = useState("");
-//   const router = useRouter();
-
-//   const handleAuth = async () => {
-//     setError("");
-//     if (!phoneNumber || !password || (isSignup && !username)) {
-//       setError("Fill all fields");
-//       return;
-//     }
-
-//     try {
-//       const endpoint = isSignup ? "/signup" : "/login";
-//       const payload = isSignup
-//         ? { username, phoneNumber, password }
-//         : { phoneNumber, password };
-
-//       const { data } = await axios.post(`${API_URL}/api/auth${endpoint}`, payload);
-
-//       localStorage.setItem("token", data.token);
-//       localStorage.setItem("username", data.username);
-//       localStorage.setItem("profileImage", data.profileImage || "/default.png");
-
-//       // CONNECT SOCKET
-//       socket.auth = { token: data.token };
-//       socket.connect();
-
-//       router.push("/chat");
-//     } catch (err) {
-//       setError(err.response?.data?.message || "Server down. Try again.");
-//     }
-//   };
-
-//   return (
-//     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-400 to-blue-600">
-//       <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md">
-//         <h1 className="text-4xl font-bold text-center text-green-600 mb-8">
-//           {isSignup ? "Join WhatsApp" : "Welcome Back"}
-//         </h1>
-
-//         {isSignup && (
-//           <input
-//             placeholder="Your Name"
-//             value={username}
-//             onChange={(e) => setUsername(e.target.value)}
-//             className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
-//           />
-//         )}
-
-//         <input
-//           placeholder="Phone Number"
-//           value={phoneNumber}
-//           onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
-//           className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
-//         />
-
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           className="w-full p-4 border-2 border-gray-300 rounded-xl mb-6 text-lg"
-//         />
-
-//         {error && <p className="text-red-500 text-center font-bold mb-4">{error}</p>}
-
-//         <button
-//           onClick={handleAuth}
-//           className="w-full bg-green-600 text-white py-5 rounded-xl font-bold text-2xl hover:bg-green-700 transition transform hover:scale-105"
-//         >
-//           {isSignup ? "CREATE ACCOUNT" : "LOGIN NOW"}
-//         </button>
-
-//         <p className="text-center mt-6 text-gray-600">
-//           {isSignup ? "Already have account?" : "New user?"}{" "}
-//           <button
-//             onClick={() => {
-//               setIsSignup(!isSignup);
-//               setError("");
-//             }}
-//             className="text-green-600 font-bold underline"
-//           >
-//             {isSignup ? "Login" : "Sign Up"}
-//           </button>
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-// src/app/login/page.js
-// "use client";
-// import { useState } from "react";
-// import axios from "axios";
-// import { useRouter } from "next/navigation";
-
-// const API_URL = "http://localhost:5000";
-
-// export default function LoginPage() {
-//   const [phoneNumber, setPhoneNumber] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [username, setUsername] = useState("");
-//   const [isSignup, setIsSignup] = useState(false);
-//   const [error, setError] = useState("");
-//   const router = useRouter();
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault(); 
-//     setError("");
-
-//     try {
-//       const endpoint = isSignup ? "/signup" : "/login";
-//       const payload = isSignup
-//         ? { username, phoneNumber, password }
-//         : { phoneNumber, password };
-
-//       const { data } = await axios.post(`${API_URL}/api/auth${endpoint}`, payload);
-
-//       // SAVE TOKEN
-//       localStorage.setItem("token", data.token);
-//       localStorage.setItem("username", data.username);
-
-//       // FORCE REDIRECT
-//       window.location.href = "/";
-//     } catch (err) {
-//       setError(err.response?.data?.message || "Wrong details");
-//     }
-//   };
-
-//   return (
-//     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-400 to-blue-600">
-//       <form onSubmit={handleSubmit} className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md">
-//         <h1 className="text-4xl font-bold text-center text-green-600 mb-8">
-//           {isSignup ? "Join WhatsApp" : "Welcome Back"}
-//         </h1>
-
-//         {isSignup && (
-//           <input
-//             required
-//             placeholder="Your Name"
-//             value={username}
-//             onChange={(e) => setUsername(e.target.value)}
-//             className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
-//           />
-//         )}
-
-//         <input
-//           required
-//           placeholder="Phone Number"
-//           value={phoneNumber}
-//           onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
-//           className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
-//         />
-
-//         <input
-//           required
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           className="w-full p-4 border-2 border-gray-300 rounded-xl mb-6 text-lg"
-//         />
-
-//         {error && <p className="text-red-500 text-center font-bold mb-4">{error}</p>}
-
-//         <button
-//           type="submit"
-//           className="w-full bg-green-600 text-white py-5 rounded-xl font-bold text-2xl hover:bg-green-700 transition"
-//         >
-//           {isSignup ? "CREATE ACCOUNT" : "LOGIN NOW"}
-//         </button>
-
-//         <p className="text-center mt-6 text-gray-600">
-//           {isSignup ? "Already have account?" : "New user?"}{" "}
-//           <button
-//             type="button"
-//             onClick={() => setIsSignup(!isSignup)}
-//             className="text-green-600 font-bold underline"
-//           >
-//             {isSignup ? "Login" : "Sign Up"}
-//           </button>
-//         </p>
-//       </form>
-//     </div>
-//   );
-// }
-
-
-
 "use client";
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react"; // <-- 1. Import icons
+import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 const API_URL = "http://localhost:5000";
 
 export default function LoginPage() {
+  // Form States
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [otp, setOtp] = useState(""); 
+  
+  // UI States
   const [isSignup, setIsSignup] = useState(false);
+  const [showOtpInput, setShowOtpInput] = useState(false); 
+  const [isResetMode, setIsResetMode] = useState(false); 
+  const [resetStep, setResetStep] = useState(1); 
+  
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // <-- 2. Add state
+  const [successMsg, setSuccessMsg] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
+  // --- 1. HANDLE LOGIN & SIGNUP ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccessMsg("");
 
-    // --- 3. ADDED VALIDATION ---
-    if (phoneNumber.length !== 10) {
-      return setError("Phone number must be exactly 10 digits.");
+    if (phoneNumber.length !== 10) return setError("Phone number must be 10 digits.");
+
+    // If waiting for Signup OTP
+    if (showOtpInput) {
+      handleVerifySignupOtp();
+      return;
     }
-    if (isSignup && password.length < 6) {
-      return setError("Password must be at least 6 characters.");
-    }
-    // --- END VALIDATION ---
+
+    if (isSignup && password.length < 6) return setError("Password min 6 chars.");
 
     try {
       const endpoint = isSignup ? "/signup" : "/login";
-      const payload = isSignup
-        ? { username, phoneNumber, password }
-        : { phoneNumber, password };
+      const payload = isSignup ? { username, phoneNumber, password } : { phoneNumber, password };
 
       const { data } = await axios.post(`${API_URL}/api/auth${endpoint}`, payload);
 
+      if (isSignup) {
+        setShowOtpInput(true);
+        setSuccessMsg("OTP sent to your phone!");
+      } else {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.username);
+        window.location.href = "/";
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Request failed");
+    }
+  };
+
+  // --- 2. VERIFY SIGNUP OTP ---
+  const handleVerifySignupOtp = async () => {
+    try {
+      const { data } = await axios.post(`${API_URL}/api/auth/verify-otp`, { phoneNumber, otp });
       localStorage.setItem("token", data.token);
       localStorage.setItem("username", data.username);
-
       window.location.href = "/";
     } catch (err) {
-      setError(err.response?.data?.message || "Wrong details");
+      setError(err.response?.data?.message || "Invalid OTP");
+    }
+  };
+
+  // --- 3. FORGOT PASSWORD ---
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMsg("");
+
+    if (resetStep === 1) {
+      // Step 1: Send OTP
+      try {
+        await axios.post(`${API_URL}/api/auth/forgot-password`, { phoneNumber });
+        setResetStep(2);
+        setSuccessMsg("OTP sent! Enter it below to reset password.");
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to send OTP");
+      }
+    } else {
+      // Step 2: Reset Password
+      if (password.length < 6) return setError("New password must be 6+ chars");
+      try {
+        await axios.post(`${API_URL}/api/auth/reset-password`, {
+          phoneNumber,
+          otp,
+          newPassword: password // reusing password state for new password
+        });
+        alert("Password Reset Successful! Please Login.");
+        // Reset everything to Login View
+        setIsResetMode(false);
+        setResetStep(1);
+        setPassword("");
+        setOtp("");
+        setSuccessMsg("");
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to reset password");
+      }
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-400 to-blue-600">
-      <form onSubmit={handleSubmit} className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md">
+      <div className="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md relative">
+        
+        {/* Header */}
         <h1 className="text-4xl font-bold text-center text-green-600 mb-8">
-          {isSignup ? "Join WhatsApp" : "Welcome Back"}
+          {isResetMode 
+            ? (resetStep === 1 ? "Reset Password" : "Set New Password") 
+            : (showOtpInput ? "Verify Phone" : (isSignup ? "Join WhatsApp" : "Welcome Back"))
+          }
         </h1>
 
-        {isSignup && (
-          <input
-            required
-            placeholder="Your Name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
-          />
-        )}
+        {/* Error / Success Messages */}
+        {error && <p className="text-red-500 text-center font-bold mb-4 bg-red-100 p-2 rounded">{error}</p>}
+        {successMsg && <p className="text-green-600 text-center font-bold mb-4 bg-green-100 p-2 rounded">{successMsg}</p>}
 
-        <input
-          required
-          placeholder="Phone Number"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
-          className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
-        />
+        {/* --- FORM --- */}
+        <form onSubmit={isResetMode ? handleForgotPassword : handleSubmit}>
+          
+          {/* Username (Only for Signup) */}
+          {!isResetMode && isSignup && !showOtpInput && (
+            <input
+              required
+              placeholder="Your Name"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
+            />
+          )}
 
-        {/* --- 4. WRAPPED PASSWORD INPUT --- */}
-        <div className="relative w-full mb-6">
-          <input
-            required
-            type={showPassword ? "text" : "password"} // <-- Toggle type
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-4 border-2 border-gray-300 rounded-xl text-lg pr-12" // <-- Added padding-right
-          />
+          {/* Phone Number  */}
+          {(!isResetMode || resetStep === 1) && !showOtpInput && (
+            <input
+              required
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
+              className="w-full p-4 border-2 border-gray-300 rounded-xl mb-4 text-lg"
+            />
+          )}
+
+          {/* Password  */}
+          {((!isResetMode && !showOtpInput) || (isResetMode && resetStep === 2)) && (
+            <div className="relative w-full mb-6">
+              <input
+                required
+                type={showPassword ? "text" : "password"}
+                placeholder={isResetMode ? "New Password" : "Password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-4 border-2 border-gray-300 rounded-xl text-lg pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-0 right-0 h-full px-4 text-gray-500"
+              >
+                {showPassword ? <EyeOff /> : <Eye />}
+              </button>
+            </div>
+          )}
+
+          {/* OTP Input  */}
+          {(showOtpInput || (isResetMode && resetStep === 2)) && (
+            <input
+              required
+              placeholder="Enter 6-digit OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              className="w-full p-4 border-2 border-gray-300 rounded-xl mb-6 text-lg text-center tracking-widest"
+            />
+          )}
+
+          {/* Submit Button */}
           <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute top-0 right-0 h-full px-4 text-gray-500"
+            type="submit"
+            className="w-full bg-green-600 text-white py-5 rounded-xl font-bold text-2xl hover:bg-green-700 transition"
           >
-            {showPassword ? <EyeOff /> : <Eye />}
+            {isResetMode 
+              ? (resetStep === 1 ? "SEND OTP" : "RESET PASSWORD")
+              : (showOtpInput ? "VERIFY" : (isSignup ? "GET OTP" : "LOGIN"))
+            }
           </button>
+        </form>
+
+        {/* --- LINKS & NAVIGATION --- */}
+        <div className="text-center mt-6 space-y-2">
+          
+          {/* Forgot Password Link */}
+          {!isResetMode && !isSignup && !showOtpInput && (
+            <button
+              type="button"
+              onClick={() => { setIsResetMode(true); setError(""); setSuccessMsg(""); }}
+              className="text-gray-500 text-sm hover:text-green-600 font-semibold block w-full"
+            >
+              Forgot Password?
+            </button>
+          )}
+
+          {/* Login / Signup Toggle */}
+          {!isResetMode && !showOtpInput && (
+            <p className="text-gray-600">
+              {isSignup ? "Already have account?" : "New user?"}{" "}
+              <button
+                type="button"
+                onClick={() => { setIsSignup(!isSignup); setError(""); }}
+                className="text-green-600 font-bold underline"
+              >
+                {isSignup ? "Login" : "Sign Up"}
+              </button>
+            </p>
+          )}
+
+          {/* Back Button  */}
+          {(isResetMode || showOtpInput) && (
+            <button
+              onClick={() => {
+                setIsResetMode(false);
+                setShowOtpInput(false);
+                setResetStep(1);
+                setError("");
+                setSuccessMsg("");
+              }}
+              className="flex items-center justify-center gap-2 w-full text-red-500 font-bold mt-4"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Login
+            </button>
+          )}
         </div>
-        {/* --- END WRAPPER --- */}
 
-        {error && <p className="text-red-500 text-center font-bold mb-4">{error}</p>}
-
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-5 rounded-xl font-bold text-2xl hover:bg-green-700 transition"
-        >
-          {isSignup ? "CREATE ACCOUNT" : "LOGIN NOW"}
-        </button>
-
-        <p className="text-center mt-6 text-gray-600">
-          {isSignup ? "Already have account?" : "New user?"}{" "}
-          <button
-            type="button"
-            onClick={() => setIsSignup(!isSignup)}
-            className="text-green-600 font-bold underline"
-          >
-            {isSignup ? "Login" : "Sign Up"}
-          </button>
-        </p>
-      </form>
+      </div>
     </div>
   );
 }

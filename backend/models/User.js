@@ -13,6 +13,9 @@
 
 // module.exports = mongoose.model("User", userSchema);
 
+
+
+// backend/models/User.js
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
@@ -26,6 +29,9 @@ const userSchema = new mongoose.Schema({
   },
   password: { type: String, required: true },
   profileImage: { type: String, default: "/default-avatar.png" }, // Path to the image
+  isVerified: { type: Boolean, default: false },
+  otp: { type: String },
+  otpExpiry: { type: Date },
   createdAt: { type: Date, default: Date.now },
 });
 
