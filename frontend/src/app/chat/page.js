@@ -22,8 +22,7 @@ import {
   Pause,
 } from "lucide-react";
 
-// const API_URL = "http://localhost:5000";
-const API_URL = "chat-app-whatsapp-main-git-main-abhinashs-projects-cc3dac45.vercel.app";
+const API_URL = "http://localhost:5000";
 
 // Call Server Configuration 
 const iceServers = {
