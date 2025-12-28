@@ -642,8 +642,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 
-const API_URL = "http://localhost:5000";
-
+// const API_URL = "http://localhost:5000";
+const API_URL="https://chat-app-whatsapp-main.vercel.app/";
 export default function LoginPage() {
   // Form States
   const [phoneNumber, setPhoneNumber] = useState("");
