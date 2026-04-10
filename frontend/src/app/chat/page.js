@@ -2583,7 +2583,7 @@ export default function ChatPage() {
                         className="w-12 h-12 rounded-full"
                         alt={user.username}
                       />
-                      <p className="font-semibold text-lg">{user.username}</p>
+                      <p className="font-semibold text-lg text-black">{user.username}</p>
                     </div>
 
                     {unread[user.username] > 0 && (
@@ -2600,12 +2600,12 @@ export default function ChatPage() {
           {activeTab === "status" && (
             <div>
               <p className="p-4 text-gray-600 font-bold bg-gray-50">Recent updates</p>
-              {allStatuses.map((userStatus) => (
-                <div
-                  key={userStatus.username}
-                  onClick={() => openStatus(userStatus)}
-                  className="p-4 hover:bg-green-50 cursor-pointer border-b flex items-center gap-3"
-                >
+             {allStatuses.map((userStatus, index) => (
+  <div
+    key={userStatus._id || userStatus.username || index}
+    onClick={() => openStatus(userStatus)}
+    className="p-4 hover:bg-green-50 cursor-pointer border-b flex items-center gap-3"
+  >
                   <div className="p-1 border-4 border-green-500 rounded-full">
                     <img
                       src={`${API_URL}${userStatus.profileImage}`}
@@ -2716,13 +2716,13 @@ export default function ChatPage() {
                     msg.sender === "You" ? "justify-end" : "justify-start"
                   } group`}
                 >
-                  <div
-                    className={`relative max-w-[90%] md:max-w-[70%] p-3 rounded-2xl shadow ${
-                      msg.sender === "You"
-                        ? "bg-green-500 text-white"
-                        : "bg-white"
-                    }`}
-                  >
+                 <div
+  className={`relative max-w-[90%] md:max-w-[70%] p-3 rounded-2xl shadow ${
+    msg.sender === "You"
+      ? "bg-green-500 text-white"
+      : "bg-zinc-100 text-gray-900"
+  }`}
+>
                     {msg.type === "image" && (
                       <img
                         src={`${API_URL}${msg.mediaUrl}`}
