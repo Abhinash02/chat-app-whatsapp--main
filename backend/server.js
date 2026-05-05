@@ -44,6 +44,17 @@ const io = new Server(server, {
   },
 });
 
+const cors = require('cors');
+
+app.use(cors({
+    origin: [
+        "http://localhost:3000", 
+        "https://chat-app-iota-one-54.vercel.app" 
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
+
 // 🌎 EXPRESS MIDDLEWARE
 app.use(cors());
 
@@ -204,3 +215,4 @@ app.get("/", (req, res) => {
 server.listen(PORT, () => {
   console.log(`🚀 Server is live on http://localhost:${PORT}`);
 });
+
